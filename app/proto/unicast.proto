@@ -1,0 +1,52 @@
+syntax = "proto2";
+
+package main;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.gostring_all) = true;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+// option (gogoproto.goproto_stringer_all) = false;
+// option (gogoproto.stringer_all) =  true;
+// option (gogoproto.populate_all) = true;
+// option (gogoproto.testgen_all) = true;
+// option (gogoproto.benchgen_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+
+//使用者发送的单播协议
+message UnicastMsg {
+    optional uint64 user_id = 1;                          // userID
+    optional int32 msg_type = 2;                          // 消息类型
+    optional bytes msg_content = 3;                       // 消息内容
+    optional int32 min_protocol = 4;                      // min protoc
+    optional bytes adapt_msg = 5;
+    // optional int64 adapt_sender = 6 [default = 10000];
+    optional int64 adapt_sender = 6;
+    optional int32 ttl = 7;                               // ttl
+    optional bytes uniq_mark = 8;                         // over write the same msg_type and uniq_mark msg
+    optional int32 all_es = 9;                            // 0:only send to es; 1:only send to h5 es; 2:send to all es;
+    optional bool  persistent = 10;                       // persistent message mark,if set,no number limit,all info send to client
+	optional uint64 msg_id = 11;
+}
+
+//msg_saver处理消息后通知broker协议
+message Notify {
+    required uint64 user_id = 1;
+}
+
+//发送给es转到客户端的包
+message ReuqestClientRecivePacketRq {
+    required int64 packet_id = 1;
+    required int32 packet_type = 2;
+    required bytes packet_content = 3;
+}
+
+//应答
+message RequestClientRecivePacketRs {
+    required int64 packet_id = 1;
+}
